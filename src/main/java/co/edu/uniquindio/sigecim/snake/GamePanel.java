@@ -1,7 +1,7 @@
 package co.edu.uniquindio.sigecim.snake;
 
 import javax.swing.*;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -15,7 +15,9 @@ public class GamePanel extends JPanel {
     DefaultListModel<Vivora> listModel; // Model for the JList
 
     public void generarComida() {
-        foods.add(new Food());
+        if (foods.size() < 1) { // Limit the number of food items
+            foods.add(new Food());
+        }
     }
 
     public void setVivoraActiva(Vivora vivora) {
@@ -27,9 +29,15 @@ public class GamePanel extends JPanel {
     }
 
     public GamePanel() {
+        setLayout(null); // Use absolute positioning for the game area
+        setBackground(Color.WHITE);
+        setFocusable(true);
+
         listModel = new DefaultListModel<>();
         snakeList = new JList<>(listModel);
-        setFocusable(true);
+        snakeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // Add key listener for controlling the active snake
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -55,11 +63,25 @@ public class GamePanel extends JPanel {
                 }
             }
         });
+
+        // Add selection listener to the snake list
+        snakeList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                Vivora selectedVivora = snakeList.getSelectedValue();
+                if (selectedVivora != null) {
+                    setVivoraActiva(selectedVivora);
+                }
+            }
+        });
+
+        // Generate initial food
+        generarComida();
     }
 
     // Method to add a new snake
     public void agregarVivora() {
-        Vivora nuevaVivora = new Vivora(true, 200, 200);
+        String nombre = "Vívora " + (vivoras.size() + 1);
+        Vivora nuevaVivora = new Vivora(true, 200, 200, nombre);
         vivoras.add(nuevaVivora);
         listModel.addElement(nuevaVivora); // Add to the list model
 
@@ -68,6 +90,9 @@ public class GamePanel extends JPanel {
         }
         vivoraActiva = nuevaVivora;
         vivoraActiva.controladaPorUsuario = true;
+
+        // Select the new snake in the list
+        snakeList.setSelectedValue(nuevaVivora, true);
 
         nuevaVivora.start();
     }
@@ -88,20 +113,41 @@ public class GamePanel extends JPanel {
     // Method to update the game state
     public void actualizarJuego() {
         // Remove dead snakes
-        vivoras.removeIf(vivora -> !vivora.viva);
+        vivoras.removeIf(vivora -> {
+            if (!vivora.viva) {
+                listModel.removeElement(vivora);
+                return true;
+            }
+            return false;
+        });
 
         // Check for collisions
         for (Vivora vivora : vivoras) {
             if (vivora.viva) {
                 Nodo cabeza = vivora.cabeza;
+                // Check self-collision
+                Nodo current = vivora.cabeza.siguienteNodo;
+                while (current != null) {
+                    if (cabeza.x == current.x && cabeza.y == current.y) {
+                        vivora.viva = false;
+                        break;
+                    }
+                    current = current.siguienteNodo;
+                }
+                if (!vivora.viva) {
+                    continue;
+                }
+                // Check collision with other snakes
                 for (Vivora otraVivora : vivoras) {
-                    Nodo current = otraVivora.cabeza;
-                    while (current != null) {
-                        if (current != cabeza && cabeza.x == current.x && cabeza.y == current.y) {
-                            vivora.viva = false;
-                            break;
+                    if (otraVivora != vivora) {
+                        current = otraVivora.cabeza;
+                        while (current != null) {
+                            if (cabeza.x == current.x && cabeza.y == current.y) {
+                                vivora.viva = false;
+                                break;
+                            }
+                            current = current.siguienteNodo;
                         }
-                        current = current.siguienteNodo;
                     }
                     if (!vivora.viva) {
                         break;

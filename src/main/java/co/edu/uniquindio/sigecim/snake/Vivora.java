@@ -11,12 +11,14 @@ public class Vivora extends Thread {
     Color color;
     boolean viva = true; // Indicates if the snake is alive
     int velocidad = 500; // Initial speed in milliseconds
+    String nombre;
 
-    public Vivora(boolean controladaPorUsuario, int startX, int startY) {
+    public Vivora(boolean controladaPorUsuario, int startX, int startY, String nombre) {
         this.controladaPorUsuario = controladaPorUsuario;
         this.cabeza = new Nodo(startX, startY);
         this.direccion = "derecha"; // Initial direction
         this.color = generarColorAleatorio();
+        this.nombre = nombre;
     }
 
     // Generates a random color for the snake
@@ -75,15 +77,12 @@ public class Vivora extends Thread {
             return;
         }
 
-        // Check for collisions with other snakes (to be implemented)
-
         cabeza.mover(newX, newY);
     }
 
 
     // Method to change direction automatically
     private void cambiarDireccionAutomatica() {
-        // Implement logic to change direction automatically without reversing
         String[] direcciones = {"arriba", "abajo", "izquierda", "derecha"};
         String direccionAnterior = this.direccion;
         Random rand = new Random();
@@ -113,8 +112,16 @@ public class Vivora extends Thread {
         g.setColor(color);
         while (current != null) {
             g.fillOval(current.x, current.y, 100, 100);
+            g.setColor(Color.BLACK);
+            g.drawOval(current.x, current.y, 100, 100); // Outline for better visibility
             current = current.siguienteNodo;
+            g.setColor(color);
         }
+    }
+
+    @Override
+    public String toString() {
+        return nombre;
     }
 }
 
