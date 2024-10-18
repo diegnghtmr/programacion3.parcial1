@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Random;
 
+import static co.edu.uniquindio.sigecim.snake.GamePanel.*;
+
 public class Vivora extends Thread {
     Nodo cabeza;
     String direccion;
@@ -12,7 +14,7 @@ public class Vivora extends Thread {
     boolean viva = true; // Indicates if the snake is alive
     int velocidad = 500; // Initial speed in milliseconds
     String nombre;
-    static final int SIZE = 20; // Tamaño de la serpiente
+    static final int SIZE = 100; // Tamaño de la serpiente
 
     public Vivora(boolean controladaPorUsuario, int startX, int startY, String nombre) {
         this.controladaPorUsuario = controladaPorUsuario;
@@ -59,21 +61,21 @@ public class Vivora extends Thread {
 
         switch (direccion) {
             case "arriba":
-                newY -= SIZE; // Adjusted step size
+                newY -= SIZE;
                 break;
             case "abajo":
-                newY += SIZE; // Adjusted step size
+                newY += SIZE;
                 break;
             case "izquierda":
-                newX -= SIZE; // Adjusted step size
+                newX -= SIZE;
                 break;
             case "derecha":
-                newX += SIZE; // Adjusted step size
+                newX += SIZE;
                 break;
         }
 
         // Check for boundaries
-        if (newX < 0 || newY < 0 || newX >= 800 || newY >= 600) {
+        if (newX < MARGIN_LEFT || newY < MARGIN_TOP || newX >= MARGIN_RIGHT || newY >= MARGIN_BOTTOM) {
             viva = false;
             return;
         }

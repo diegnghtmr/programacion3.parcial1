@@ -13,7 +13,7 @@ public class GameFrame extends JFrame {
 
     public GameFrame() {
         setTitle("Juego de Vívora");
-        setSize(1000, 600);
+        setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         panelesVivoras = new HashMap<>();
@@ -22,6 +22,7 @@ public class GameFrame extends JFrame {
 
         // Create the side panel for controls and snake list
         JPanel sidePanel = new JPanel(new BorderLayout());
+        sidePanel.setPreferredSize(new Dimension(200, getHeight()));
 
         // Add button to add new snake
         JButton agregarVivoraButton = new JButton("Agregar Vívora");

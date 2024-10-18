@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.Random;
 
+import static co.edu.uniquindio.sigecim.snake.GamePanel.*;
+
 public class Food {
     int x, y;
     Color color;
@@ -11,8 +13,8 @@ public class Food {
 
     public Food() {
         Random rand = new Random();
-        this.x = rand.nextInt(40) * SIZE; // Ajustar para que coincida con el tamaño de la serpiente
-        this.y = rand.nextInt(30) * SIZE; // Ajustar para que coincida con el tamaño de la serpiente
+        this.x = MARGIN_LEFT + rand.nextInt((MARGIN_RIGHT - MARGIN_LEFT) / SIZE) * SIZE;
+        this.y = MARGIN_TOP + rand.nextInt((MARGIN_BOTTOM - MARGIN_TOP) / SIZE) * SIZE;
         this.color = Color.RED;
     }
 

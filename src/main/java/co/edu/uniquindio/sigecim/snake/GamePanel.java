@@ -9,12 +9,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class GamePanel extends JPanel {
     Vivora vivora;
     CopyOnWriteArrayList<Food> foods = new CopyOnWriteArrayList<>();
+    protected static final int MARGIN_LEFT = 20;
+    protected static final int MARGIN_RIGHT = 780;
+    protected static final int MARGIN_TOP = 20;
+    protected static final int MARGIN_BOTTOM = 580;
 
     public GamePanel(Vivora vivora) {
         this.vivora = vivora;
         setLayout(null); // Use absolute positioning for the game area
         setBackground(Color.WHITE);
         setFocusable(true);
+        setPreferredSize(new Dimension(MARGIN_RIGHT - MARGIN_LEFT, MARGIN_BOTTOM - MARGIN_TOP));
 
         // Add key listener for controlling the active snake
         addKeyListener(new KeyAdapter() {
@@ -54,6 +59,11 @@ public class GamePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+
+        // Draw margins
+        g.setColor(Color.BLACK);
+        g.drawRect(MARGIN_LEFT, MARGIN_TOP, MARGIN_RIGHT - MARGIN_LEFT, MARGIN_BOTTOM - MARGIN_TOP);
+
         if (vivora.viva) {
             vivora.draw(g);
         }
