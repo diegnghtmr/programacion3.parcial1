@@ -37,7 +37,9 @@ public class GameFrame extends JFrame {
             if (!e.getValueIsAdjusting()) {
                 Vivora selectedVivora = snakeList.getSelectedValue();
                 if (selectedVivora != null) {
+                    actualizarControl(selectedVivora);
                     cardLayout.show(mainPanel, selectedVivora.toString());
+                    panelesVivoras.get(selectedVivora).requestFocusInWindow(); // Request focus for the selected panel
                 }
             }
         });
@@ -67,20 +69,28 @@ public class GameFrame extends JFrame {
         primeraVivora.start();
     }
 
-    public void agregarVivora() {
+    private void agregarVivora() {
         String nombre = "Vívora " + (panelesVivoras.size() + 1);
-        Vivora nuevaVivora = new Vivora(false, 200, 200, nombre);
+        Vivora nuevaVivora = new Vivora(true, 200, 200, nombre); // Set the new snake as controlled by the user
         GamePanel nuevoPanel = new GamePanel(nuevaVivora);
         panelesVivoras.put(nuevaVivora, nuevoPanel);
         mainPanel.add(nuevoPanel, nombre);
         listModel.addElement(nuevaVivora);
         cardLayout.show(mainPanel, nombre);
+        nuevoPanel.requestFocusInWindow(); // Request focus for the new panel
+        actualizarControl(nuevaVivora); // Update control state of all snakes
         nuevaVivora.start();
     }
 
     public void actualizarJuego() {
         for (GamePanel panel : panelesVivoras.values()) {
             panel.actualizarJuego();
+        }
+    }
+
+    private void actualizarControl(Vivora selectedVivora) {
+        for (Vivora vivora : panelesVivoras.keySet()) {
+            vivora.setControladaPorUsuario(vivora == selectedVivora);
         }
     }
 

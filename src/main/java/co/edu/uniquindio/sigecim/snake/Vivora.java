@@ -14,7 +14,7 @@ public class Vivora extends Thread {
     boolean viva = true; // Indicates if the snake is alive
     int velocidad = 500; // Initial speed in milliseconds
     String nombre;
-    static final int SIZE = 100; // Tamaño de la serpiente
+    static final int SIZE = 20; // Tamaño de la serpiente
 
     public Vivora(boolean controladaPorUsuario, int startX, int startY, String nombre) {
         this.controladaPorUsuario = controladaPorUsuario;
@@ -36,6 +36,10 @@ public class Vivora extends Thread {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    public void setControladaPorUsuario(boolean controladaPorUsuario) {
+        this.controladaPorUsuario = controladaPorUsuario;
     }
 
     @Override
