@@ -2,13 +2,12 @@ package co.edu.uniquindio.sigecim.snake;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameFrame extends JFrame {
-    Map<Vivora, GamePanel> panelesVivoras;
-    JPanel mainPanel;
-    CardLayout cardLayout;
+    List<Vivora> vivoras;
+    GamePanel gamePanel;
     DefaultListModel<Vivora> listModel;
 
     public GameFrame() {
@@ -16,9 +15,8 @@ public class GameFrame extends JFrame {
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        panelesVivoras = new HashMap<>();
-        cardLayout = new CardLayout();
-        mainPanel = new JPanel(cardLayout);
+        vivoras = new ArrayList<>();
+        gamePanel = new GamePanel(vivoras);
 
         // Create the side panel for controls and snake list
         JPanel sidePanel = new JPanel(new BorderLayout());
@@ -38,8 +36,7 @@ public class GameFrame extends JFrame {
                 Vivora selectedVivora = snakeList.getSelectedValue();
                 if (selectedVivora != null) {
                     actualizarControl(selectedVivora);
-                    cardLayout.show(mainPanel, selectedVivora.toString());
-                    panelesVivoras.get(selectedVivora).requestFocusInWindow(); // Request focus for the selected panel
+                    gamePanel.requestFocusInWindow(); // Request focus for the game panel
                 }
             }
         });
@@ -47,7 +44,7 @@ public class GameFrame extends JFrame {
         sidePanel.add(snakeListScrollPane, BorderLayout.CENTER);
 
         // Add the side panel to the main panel
-        add(mainPanel, BorderLayout.CENTER);
+        add(gamePanel, BorderLayout.CENTER);
         add(sidePanel, BorderLayout.EAST);
 
         // Create the first snake controlled by the user
@@ -61,35 +58,32 @@ public class GameFrame extends JFrame {
     private void agregarVivoraInicial() {
         String nombre = "Vívora 1";
         Vivora primeraVivora = new Vivora(true, 200, 200, nombre);
-        GamePanel primerPanel = new GamePanel(primeraVivora);
-        panelesVivoras.put(primeraVivora, primerPanel);
-        mainPanel.add(primerPanel, nombre);
+        vivoras.add(primeraVivora);
         listModel.addElement(primeraVivora);
-        cardLayout.show(mainPanel, nombre);
+        actualizarControl(primeraVivora);
         primeraVivora.start();
     }
 
     private void agregarVivora() {
-        String nombre = "Vívora " + (panelesVivoras.size() + 1);
+        String nombre = "Vívora " + (vivoras.size() + 1);
         Vivora nuevaVivora = new Vivora(true, 200, 200, nombre); // Set the new snake as controlled by the user
-        GamePanel nuevoPanel = new GamePanel(nuevaVivora);
-        panelesVivoras.put(nuevaVivora, nuevoPanel);
-        mainPanel.add(nuevoPanel, nombre);
+        vivoras.add(nuevaVivora);
         listModel.addElement(nuevaVivora);
-        cardLayout.show(mainPanel, nombre);
-        nuevoPanel.requestFocusInWindow(); // Request focus for the new panel
         actualizarControl(nuevaVivora); // Update control state of all snakes
         nuevaVivora.start();
+
+        // Select the new snake in the list to make it the active one
+        int index = listModel.getSize() - 1;
+        JList<Vivora> snakeList = (JList<Vivora>) ((JScrollPane) ((JPanel) getContentPane().getComponent(1)).getComponent(1)).getViewport().getView();
+        snakeList.setSelectedIndex(index);
     }
 
     public void actualizarJuego() {
-        for (GamePanel panel : panelesVivoras.values()) {
-            panel.actualizarJuego();
-        }
+        gamePanel.actualizarJuego();
     }
 
     private void actualizarControl(Vivora selectedVivora) {
-        for (Vivora vivora : panelesVivoras.keySet()) {
+        for (Vivora vivora : vivoras) {
             vivora.setControladaPorUsuario(vivora == selectedVivora);
         }
     }
