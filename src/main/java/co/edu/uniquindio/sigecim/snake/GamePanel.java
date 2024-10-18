@@ -4,11 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GamePanel extends JPanel {
     Vivora vivora;
-    ArrayList<Food> foods = new ArrayList<>();
+    CopyOnWriteArrayList<Food> foods = new CopyOnWriteArrayList<>();
 
     public GamePanel(Vivora vivora) {
         this.vivora = vivora;
@@ -48,9 +48,7 @@ public class GamePanel extends JPanel {
     }
 
     public void generarComida() {
-        if (foods.size() < 1) { // Limit the number of food items
-            foods.add(new Food());
-        }
+        foods.add(new Food());
     }
 
     @Override
@@ -86,14 +84,13 @@ public class GamePanel extends JPanel {
         }
 
         // Check for food collisions
-        foods.removeIf(food -> {
+        for (Food food : foods) {
             if (cabeza.x == food.x && cabeza.y == food.y) {
                 vivora.agregarNodo(); // Add a new node to the snake
-                generarComida();
-                return true;
+                foods.remove(food); // Remove the food
+                generarComida(); // Generate new food
             }
-            return false;
-        });
+        }
 
         repaint();
     }
