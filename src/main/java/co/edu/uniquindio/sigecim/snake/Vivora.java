@@ -12,6 +12,7 @@ public class Vivora extends Thread {
     boolean viva = true; // Indicates if the snake is alive
     int velocidad = 500; // Initial speed in milliseconds
     String nombre;
+    static final int SIZE = 20; // Tamaño de la serpiente
 
     public Vivora(boolean controladaPorUsuario, int startX, int startY, String nombre) {
         this.controladaPorUsuario = controladaPorUsuario;
@@ -58,16 +59,16 @@ public class Vivora extends Thread {
 
         switch (direccion) {
             case "arriba":
-                newY -= 100;
+                newY -= SIZE; // Adjusted step size
                 break;
             case "abajo":
-                newY += 100;
+                newY += SIZE; // Adjusted step size
                 break;
             case "izquierda":
-                newX -= 100;
+                newX -= SIZE; // Adjusted step size
                 break;
             case "derecha":
-                newX += 100;
+                newX += SIZE; // Adjusted step size
                 break;
         }
 
@@ -79,7 +80,6 @@ public class Vivora extends Thread {
 
         cabeza.mover(newX, newY);
     }
-
 
     // Method to change direction automatically
     private void cambiarDireccionAutomatica() {
@@ -111,9 +111,9 @@ public class Vivora extends Thread {
         Nodo current = cabeza;
         g.setColor(color);
         while (current != null) {
-            g.fillOval(current.x, current.y, 100, 100);
+            g.fillOval(current.x, current.y, SIZE, SIZE); // Adjusted size
             g.setColor(Color.BLACK);
-            g.drawOval(current.x, current.y, 100, 100); // Outline for better visibility
+            g.drawOval(current.x, current.y, SIZE, SIZE); // Outline for better visibility
             current = current.siguienteNodo;
             g.setColor(color);
         }
@@ -124,4 +124,3 @@ public class Vivora extends Thread {
         return nombre;
     }
 }
-

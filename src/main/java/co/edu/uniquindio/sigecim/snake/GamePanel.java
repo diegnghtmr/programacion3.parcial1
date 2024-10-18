@@ -70,6 +70,9 @@ public class GamePanel extends JPanel {
             return;
         }
 
+        // Mover la víbora
+        vivora.moverSnake();
+
         // Check for collisions
         Nodo cabeza = vivora.cabeza;
         // Check self-collision
@@ -85,7 +88,7 @@ public class GamePanel extends JPanel {
         // Check for food collisions
         foods.removeIf(food -> {
             if (cabeza.x == food.x && cabeza.y == food.y) {
-                vivora.agregarNodo();
+                vivora.agregarNodo(); // Add a new node to the snake
                 generarComida();
                 return true;
             }
