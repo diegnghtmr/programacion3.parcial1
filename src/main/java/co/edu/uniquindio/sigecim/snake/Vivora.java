@@ -12,7 +12,7 @@ public class Vivora extends Thread {
     boolean controladaPorUsuario;
     Color color;
     boolean viva = true; // Indicates if the snake is alive
-    int velocidad = 500; // Initial speed in milliseconds
+    int velocidad = 200; // Initial speed in milliseconds
     String nombre;
     static final int SIZE = 20; // Tamaño de la serpiente
 
@@ -55,7 +55,7 @@ public class Vivora extends Thread {
     }
 
     // Method to move the snake
-    public void moverSnake() {
+    public synchronized void moverSnake() {
         int newX = cabeza.x;
         int newY = cabeza.y;
 
@@ -102,14 +102,19 @@ public class Vivora extends Thread {
     }
 
     // Method to add a new node when the snake eats
-    public void agregarNodo() {
+    public synchronized void agregarNodo() {
         Nodo cola = cabeza.getCola();
-        Nodo nuevoNodo = new Nodo(cola.x, cola.y);
+        Nodo nuevoNodo = new Nodo(cola.prevX, cola.prevY);
         cola.siguienteNodo = nuevoNodo;
-        // Increase speed slightly
-        if (velocidad > 100) {
+        // Aumentar la velocidad ligeramente
+        if (velocidad > 80) {
             velocidad -= 20;
         }
+    }
+
+
+    public synchronized Nodo getCabeza() {
+        return cabeza;
     }
 
     // Method to draw the snake

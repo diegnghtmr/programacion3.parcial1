@@ -84,44 +84,45 @@ public class GamePanel extends JPanel {
                 continue;
             }
 
-            // Move the snake
-            vivora.moverSnake();
-
-            // Check for self-collision
-            Nodo cabeza = vivora.cabeza;
-            Nodo current = vivora.cabeza.siguienteNodo;
-            while (current != null) {
-                if (cabeza.x == current.x && cabeza.y == current.y) {
-                    vivora.viva = false;
-                    break;
+            synchronized (vivora) {
+                // Obtener la cabeza de manera segura
+                Nodo cabeza = vivora.getCabeza();
+                Nodo current = cabeza.siguienteNodo;
+                while (current != null) {
+                    if (cabeza.x == current.x && cabeza.y == current.y) {
+                        vivora.viva = false;
+                        break;
+                    }
+                    current = current.siguienteNodo;
                 }
-                current = current.siguienteNodo;
-            }
 
-            // Check for food collisions
-            for (Food food : foods) {
-                if (cabeza.x == food.x && cabeza.y == food.y) {
-                    vivora.agregarNodo(); // Add a new node to the snake
-                    foods.remove(food); // Remove the food
-                    generarComida(); // Generate new food
+                // Comprobación de colisión con comida
+                for (Food food : foods) {
+                    if (cabeza.x == food.x && cabeza.y == food.y) {
+                        vivora.agregarNodo();
+                        foods.remove(food);
+                        generarComida();
+                        break;
+                    }
                 }
-            }
 
-            // Check for collisions with other snakes
-            for (Vivora otherVivora : vivoras) {
-                if (otherVivora != vivora && otherVivora.viva) {
-                    Nodo otherCurrent = otherVivora.cabeza;
-                    while (otherCurrent != null) {
-                        if (cabeza.x == otherCurrent.x && cabeza.y == otherCurrent.y) {
-                            vivora.viva = false;
-                            break;
+                // Comprobación de colisiones con otras víboras
+                for (Vivora otherVivora : vivoras) {
+                    if (otherVivora != vivora && otherVivora.viva) {
+                        Nodo otherCurrent = otherVivora.getCabeza();
+                        synchronized (otherVivora) {
+                            while (otherCurrent != null) {
+                                if (cabeza.x == otherCurrent.x && cabeza.y == otherCurrent.y) {
+                                    vivora.viva = false;
+                                    break;
+                                }
+                                otherCurrent = otherCurrent.siguienteNodo;
+                            }
                         }
-                        otherCurrent = otherCurrent.siguienteNodo;
                     }
                 }
             }
         }
-
         repaint();
     }
 }
